@@ -9,8 +9,17 @@
 
 
 
+/* initial style for gameboard - you'll want to delete this later   */
+/* it's just for getting started with js */
 
 
+#gameBoard div{
+  width: 150px;
+  height: 150px;
+  border-style: solid;
+  border-color: black;
+  border-width: 2px;
+}
 
 
 
