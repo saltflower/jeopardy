@@ -3,6 +3,11 @@ const categories=["Sports", "Animals", "Science & Nature", "History", "Art"]
 
 /* add event listeners for start & reset buttons here */
 
+const start = document.getElementById("startButton");
+const reset = document.getElementById("resetButton");
+const total = document.getElementById("total");
+start.addEventListener("click", startGame);
+reset.addEventListener("click", resetGame);
 
 
 /* complete functions below */
@@ -12,13 +17,18 @@ const categories=["Sports", "Animals", "Science & Nature", "History", "Art"]
 
 function startGame(){
 
+    start.setAttribute("disabled", true);
+    reset.setAttribute("disabled", false);
+    populateBoard();
+    total.textContent = 0;
 
+    document.getElementById("submitResponse").addEventListener("click", checkResponse);
 
 
 }
 
 function populateBoard(){
-
+    
 
 
 }
