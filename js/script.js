@@ -1,5 +1,6 @@
+const categories = document.getElementsByClassName("category");
+const questions = document.getElementsByClassName("question");
 
-const categories=["Sports", "Animals", "Science & Nature", "History", "Art"]
 
 /* add event listeners for start & reset buttons here */
 
@@ -8,6 +9,7 @@ const reset = document.getElementById("resetButton");
 const total = document.getElementById("total");
 start.addEventListener("click", startGame);
 reset.addEventListener("click", resetGame);
+let curId;
 
 
 /* complete functions below */
@@ -17,19 +19,20 @@ reset.addEventListener("click", resetGame);
 
 function startGame(){
 
-    start.setAttribute("disabled", true);
-    reset.setAttribute("disabled", false);
+    start.toggleAttribute("disabled");
+    reset.toggleAttribute("disabled");
+    
     populateBoard();
     total.textContent = 0;
 
     document.getElementById("submitResponse").addEventListener("click", checkResponse);
+    
 
 
 }
 
 function populateBoard(){
-    const categories = document.getElementsByClassName("category");
-    const questions = document.getElementsByClassName("question");
+    
 
     const categoryNames = ["sports", "animals", "science & nature", "history", "art"];
 
@@ -52,10 +55,10 @@ function populateBoard(){
 
 function viewQuestion(){
     
-    console.log(this.id)
+    console.log(this.id);
     // If id is set earlier, saving it to local storage
     window.localStorage.setItem("currentIndex", this.id);
-
+    curId = this.id;
 
     // Get the modal
     // Not using var makes it global
@@ -80,31 +83,46 @@ function viewQuestion(){
 }
 
 
-function checkResponse(){
+function checkResponse(e){
+    e.preventDefault();
     const form = document.querySelector("form");
     const feedback = document.getElementById("feedback");
+    const curEl = document.getElementById(curId);
     console.log("helloooo");
     for (let i = 0; i < form.children.length; i++) {
-        console.log(form.children[i].firstChild.value);
+        console.log(form.children[i].firstChild.checked);
         if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
             feedback.innerHTML = "Correct!";
+            
+            total.textContent = parseInt(total.textContent) + parseInt(curEl.textContent);
         }
         else if (form.children[i].firstChild.value == "correct" && !form.children[i].firstChild.checked) {
-           feedback.innerHTML = form.children[i].firstChild.innerHTML.trim();
-           
+            feedback.innerHTML = "Wrong! " + form.children[i].textContent.trim() + " was the correct answer.";
+            
+            total.textContent = parseInt(total.textContent) - parseInt(curEl.textContent);
         }
-    }
-    
-
-
-
-
-    /* for closing modal */
-    //modal.style.display = "none";
+        }
+        
+    form.reset();
+    modal.style.display = "none";
+    curEl.innerHTML = "";
+    curEl.removeEventListener("click", viewQuestion);
 }
 
 function resetGame(){
+    total.textContent = 0;
+    for (let el of questions) {
+        el.id = "";
+        el.removeEventListener("click", viewQuestion);
+        el.textContent = "";
+    }
+    for (let el of categories) {
+        el.textContent = "";
+    }
 
+    reset.toggleAttribute("disabled");
+    start.toggleAttribute("disabled");
+    document.getElementById("feedback").innerHTML = "Click Start to begin.";
 
 
 
