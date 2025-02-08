@@ -28,8 +28,20 @@ function startGame(){
 }
 
 function populateBoard(){
-    
+    const categories = document.getElementsByClassName("category");
+    const questions = document.getElementsByClassName("question");
 
+    const categoryNames = ["sports", "animals", "science & nature", "history", "art"];
+
+    for (let i = 0; i < categories.length; i++) {
+        categories[i].textContent = categoryNames[i];
+    }
+
+    for (let i = 0; i < questions.length; i++) {
+        questions[i].textContent = (Math.floor(i / 5)+1) * 10;
+        questions[i].id = "q"+(i+1);
+        questions[i].addEventListener("click", viewQuestion);
+    }
 
 }
 
@@ -69,6 +81,19 @@ function viewQuestion(){
 
 
 function checkResponse(){
+    const form = document.querySelector("form");
+    const feedback = document.getElementById("feedback");
+    console.log("helloooo");
+    for (let i = 0; i < form.children.length; i++) {
+        console.log(form.children[i].firstChild.value);
+        if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
+            feedback.innerHTML = "Correct!";
+        }
+        else if (form.children[i].firstChild.value == "correct" && !form.children[i].firstChild.checked) {
+           feedback.innerHTML = form.children[i].firstChild.innerHTML.trim();
+           
+        }
+    }
     
 
 
