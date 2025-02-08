@@ -17,6 +17,7 @@
   grid-template-columns: 20% 20% 20% 20% 20%;
   grid-template-rows: 75px 75px 75px 75px 75px 75px;
   background-color: black;
+  padding: 5px;
 }
 
 body {

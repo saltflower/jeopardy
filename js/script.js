@@ -97,7 +97,7 @@ function checkResponse(e){
             total.textContent = parseInt(total.textContent) + parseInt(curEl.textContent);
         }
         else if (form.children[i].firstChild.value == "correct" && !form.children[i].firstChild.checked) {
-            feedback.innerHTML = "Wrong! " + form.children[i].textContent.trim() + " was the correct answer.";
+            feedback.innerHTML = "Wrong. The correct answer is: " + form.children[i].textContent.trim();
             
             total.textContent = parseInt(total.textContent) - parseInt(curEl.textContent);
         }
