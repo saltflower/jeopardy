@@ -69,7 +69,7 @@ function viewQuestion(json){
     // Get the modal
     // Not using var makes it global
     modal = document.getElementById("qaModal");
-    let curQuestion = JSON.stringify(json.question).replace(/(&quot\;)/g, "\"").replace(/(&#039;)/g, "\'").replace(/(&uuml;)/g, "ü").replace(/(&eacute;)/g, "é").replace(/(&ouml;)/g, "ö").replace(/(&rdquo;)/g, "”").replace(/(&ldquo;)/g, "“");
+    let curQuestion = JSON.stringify(json.question).replace(/(&quot\;)/g, "\"").replace(/(&#039;)/g, "\'").replace(/(&uuml;)/g, "ü").replace(/(&eacute;)/g, "é").replace(/(&ouml;)/g, "ö").replace(/(&rdquo;)/g, "”").replace(/(&ldquo;)/g, "“").replace(/(&deg;)/g, "°");
     document.getElementById("questionArea").children[0].textContent = curQuestion;
 
     let answerArea = document.getElementById("answerArea").children[0];
@@ -142,9 +142,19 @@ function resetGame(){
 async function setToken() {
     document.getElementById("feedback").innerText = "Loading...";
     let url = "https://opentdb.com/api_token.php?command=request";
-    let response = await fetch(url);
-    let json = await response.json();
-    let token = (json.token);
+    let response;
+    await $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        async: true,
+        success: function(data) {
+            console.log(data);
+            response = data;
+        }
+    });
+    console.log(response);
+    let token = (response.token);
     window.localStorage.setItem("sessionToken", token);
     document.getElementById("feedback").innerText = "Game Started";
     startGame();
@@ -156,29 +166,37 @@ async function loadQuestion() {
     let categoryChosen = categoryNames[this.getAttribute("data-cat")];
     let difficulty = this.getAttribute("data-difficulty");
     let url = `https://opentdb.com/api.php?amount=1&category=${categoryChosen}&difficulty=${difficulty}&type=multiple&token=${sessionToken}`;
-    
-    
-    try {
-        let response = await fetch(url);
-        let json = await response.json();
-        viewQuestion(json.results[0]);
-    } catch (error) {
-        console.log(error);
-        if (error instanceof TypeError) console.log("meow");
-        if (error instanceof TypeError) document.getElementById("feedback").textContent = "Slow down!";
-    }
+
+
+
+    let response;
+    await $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            console.log(data);
+            response = data;
+        },
+        error: function (xhr, status, error) {
+            document.getElementById("feedback").textContent = "Slow down!";
+        }
+    });
+    viewQuestion(response.results[0]);
+
 }
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-  
-      // swap elements array[i] and array[j]
-      // we use "destructuring assignment" syntax to achieve that
-      // you'll find more details about that syntax in later chapters
-      // same can be written as:
-      // let t = array[i]; array[i] = array[j]; array[j] = t
-      [array[i], array[j]] = [array[j], array[i]];
+        let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+
+        // swap elements array[i] and array[j]
+        // we use "destructuring assignment" syntax to achieve that
+        // you'll find more details about that syntax in later chapters
+        // same can be written as:
+        // let t = array[i]; array[i] = array[j]; array[j] = t
+        [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-  }
+}
