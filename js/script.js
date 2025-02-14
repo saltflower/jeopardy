@@ -97,28 +97,36 @@ function viewQuestion(json){
 }
 
 
-function checkResponse(e){
+function checkResponse(e) {
     e.preventDefault();
     const form = document.querySelector("form");
     const feedback = document.getElementById("feedback");
     const curEl = document.getElementById(window.localStorage.getItem("currentIndex"));
-    for (let i = 0; i < form.children.length; i++) {
-        if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
-            feedback.innerHTML = "Correct!";
-            
-            total.textContent = parseInt(total.textContent) + parseInt(curEl.textContent);
+    let isOneChecked = false;
+    for (let i of form.children) {
+        if (i.firstChild.checked) {
+            isOneChecked = true;
         }
-        else if (form.children[i].firstChild.value == "correct" && !form.children[i].firstChild.checked) {
-            feedback.innerHTML = "Wrong. The correct answer is: " + form.children[i].textContent.trim();
-            
-            total.textContent = parseInt(total.textContent) - parseInt(curEl.textContent);
+    }
+    if (isOneChecked) {
+        for (let i = 0; i < form.children.length; i++) {
+            if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
+                feedback.innerHTML = "Correct!";
+
+                total.textContent = parseInt(total.textContent) + parseInt(curEl.textContent);
+            }
+            else if (form.children[i].firstChild.value == "correct" && !form.children[i].firstChild.checked) {
+                feedback.innerHTML = "Wrong. The correct answer is: " + form.children[i].textContent.trim();
+
+                total.textContent = parseInt(total.textContent) - parseInt(curEl.textContent);
+            }
         }
-        }
-        
-    form.reset();
-    modal.style.display = "none";
-    curEl.innerHTML = "";
-    curEl.removeEventListener("click", viewQuestion);
+
+        form.reset();
+        modal.style.display = "none";
+        curEl.innerHTML = "";
+        curEl.removeEventListener("click", viewQuestion);
+    }
 }
 
 function resetGame(){
