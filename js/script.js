@@ -156,9 +156,17 @@ async function loadQuestion() {
     let categoryChosen = categoryNames[this.getAttribute("data-cat")];
     let difficulty = this.getAttribute("data-difficulty");
     let url = `https://opentdb.com/api.php?amount=1&category=${categoryChosen}&difficulty=${difficulty}&type=multiple&token=${sessionToken}`;
-    let response = await fetch(url);
-    let json = await response.json();
-    viewQuestion(json.results[0]);
+    
+    
+    try {
+        let response = await fetch(url);
+        let json = await response.json();
+        viewQuestion(json.results[0]);
+    } catch (error) {
+        console.log(error);
+        if (error instanceof TypeError) console.log("meow");
+        if (error instanceof TypeError) document.getElementById("feedback").textContent = "Slow down!";
+    }
 }
 
 function shuffle(array) {
