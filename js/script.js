@@ -57,16 +57,28 @@ function populateBoard(){
 
 
 
-function viewQuestion(){
-    
-    console.log(this.id);
-    // If id is set earlier, saving it to local storage
-    
-    curId = this.id;
+function viewQuestion(json){
+    console.log(json);
+    let correctAnswer = json.correct_answer;
+    let optionsArr = [];
+    optionsArr.push(correctAnswer);
+    optionsArr.push(...json.incorrect_answers.slice(1));
+    optionsArr = shuffle(optionsArr);
 
+    console.log(optionsArr);
     // Get the modal
     // Not using var makes it global
     modal = document.getElementById("qaModal");
+    let curQuestion = JSON.stringify(json.question).replace(/(&quot\;)/g, "\"").replace(/(&#039;)/g, "\'").replace(/(&uuml;)/g, "ü").replace(/(&eacute;)/g, "é").replace(/(&ouml;)/g, "ö").replace(/(&rdquo;)/g, "”").replace(/(&ldquo;)/g, "“");
+    document.getElementById("questionArea").children[0].textContent = curQuestion;
+
+    let answerArea = document.getElementById("answerArea").children[0];
+
+    for (let i = 0; i < 3; i++) {
+        answerArea.children[i].lastChild.textContent = optionsArr[i];
+        if (optionsArr[i]==correctAnswer) { answerArea.children[i].firstChild.value = "correct"; }
+        else { answerArea.children[i].firstChild.value = "incorrect"; }
+    }
 
     // Get the <span> element that closes the modal
     var closeX = document.getElementsByClassName("close")[0];
@@ -91,7 +103,7 @@ function checkResponse(e){
     e.preventDefault();
     const form = document.querySelector("form");
     const feedback = document.getElementById("feedback");
-    const curEl = document.getElementById(curId);
+    const curEl = document.getElementById(window.localStorage.getItem("currentIndex"));
     for (let i = 0; i < form.children.length; i++) {
         if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
             feedback.innerHTML = "Correct!";
@@ -146,7 +158,7 @@ async function loadQuestion() {
     let url = `https://opentdb.com/api.php?amount=1&category=${categoryChosen}&difficulty=${difficulty}&type=multiple&token=${sessionToken}`;
     let response = await fetch(url);
     let json = await response.json();
-    viewQuestion(json);
+    viewQuestion(json.results[0]);
 }
 
 function shuffle(array) {
