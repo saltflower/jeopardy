@@ -58,14 +58,12 @@ function populateBoard(){
 
 
 function viewQuestion(json){
-    console.log(json);
     let correctAnswer = json.correct_answer;
     let optionsArr = [];
     optionsArr.push(correctAnswer);
     optionsArr.push(...json.incorrect_answers.slice(1));
     optionsArr = shuffle(optionsArr);
 
-    console.log(optionsArr);
     // Get the modal
     // Not using var makes it global
     modal = document.getElementById("qaModal");
@@ -149,11 +147,9 @@ async function setToken() {
         dataType: "json",
         async: true,
         success: function(data) {
-            console.log(data);
             response = data;
         }
     });
-    console.log(response);
     let token = (response.token);
     window.localStorage.setItem("sessionToken", token);
     document.getElementById("feedback").innerText = "Game Started";
@@ -176,7 +172,6 @@ async function loadQuestion() {
         dataType: "json",
         async: true,
         success: function (data) {
-            console.log(data);
             response = data;
         },
         error: function (xhr, status, error) {
