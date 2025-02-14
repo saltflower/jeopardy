@@ -1,13 +1,13 @@
 const categories = document.getElementsByClassName("category");
 const questions = document.getElementsByClassName("question");
-
+const categoryNames={"Sports": 21, "Animals": 27, "Science & Nature": 17, "History": 23, "Art":25};
 
 /* add event listeners for start & reset buttons here */
 
 const start = document.getElementById("startButton");
 const reset = document.getElementById("resetButton");
 const total = document.getElementById("total");
-start.addEventListener("click", startGame);
+start.addEventListener("click", setToken);
 reset.addEventListener("click", resetGame);
 let curId;
 
@@ -32,18 +32,22 @@ function startGame(){
 }
 
 function populateBoard(){
-    
-
-    const categoryNames = ["sports", "animals", "science & nature", "history", "art"];
-
+    let categoryKeys = Object.keys(categoryNames);
     for (let i = 0; i < categories.length; i++) {
-        categories[i].textContent = categoryNames[i];
+        categories[i].textContent = categoryKeys[i];
     }
 
     for (let i = 0; i < questions.length; i++) {
         questions[i].textContent = (Math.floor(i / 5)+1) * 10;
         questions[i].id = "q"+(i+1);
-        questions[i].addEventListener("click", viewQuestion);
+        questions[i].addEventListener("click", loadQuestion);
+        switch (questions[i].textContent) {
+            case "10": questions[i].setAttribute("data-cat", categoryKeys[Math.floor(i % 5)]); questions[i].setAttribute("data-difficulty", "easy"); break;
+            case "20": questions[i].setAttribute("data-cat", categoryKeys[Math.floor(i % 5)]); questions[i].setAttribute("data-difficulty", "medium"); break;
+            case "30": questions[i].setAttribute("data-cat", categoryKeys[Math.floor(i % 5)]); questions[i].setAttribute("data-difficulty", "medium"); break;
+            case "40": questions[i].setAttribute("data-cat", categoryKeys[Math.floor(i % 5)]); questions[i].setAttribute("data-difficulty", "medium"); break;
+            case "50": questions[i].setAttribute("data-cat", categoryKeys[Math.floor(i % 5)]); questions[i].setAttribute("data-difficulty", "hard"); break;
+        }
     }
 
 }
@@ -57,7 +61,7 @@ function viewQuestion(){
     
     console.log(this.id);
     // If id is set earlier, saving it to local storage
-    window.localStorage.setItem("currentIndex", this.id);
+    
     curId = this.id;
 
     // Get the modal
@@ -88,9 +92,7 @@ function checkResponse(e){
     const form = document.querySelector("form");
     const feedback = document.getElementById("feedback");
     const curEl = document.getElementById(curId);
-    console.log("helloooo");
     for (let i = 0; i < form.children.length; i++) {
-        console.log(form.children[i].firstChild.checked);
         if (form.children[i].firstChild.value == "correct" && form.children[i].firstChild.checked) {
             feedback.innerHTML = "Correct!";
             
@@ -123,8 +125,40 @@ function resetGame(){
     reset.toggleAttribute("disabled");
     start.toggleAttribute("disabled");
     document.getElementById("feedback").innerHTML = "Click Start to begin.";
-
-
-
-
 }
+
+async function setToken() {
+    document.getElementById("feedback").innerText = "Loading...";
+    let url = "https://opentdb.com/api_token.php?command=request";
+    let response = await fetch(url);
+    let json = await response.json();
+    let token = (json.token);
+    window.localStorage.setItem("sessionToken", token);
+    document.getElementById("feedback").innerText = "Game Started";
+    startGame();
+}
+
+async function loadQuestion() {
+    window.localStorage.setItem("currentIndex", this.id);
+    let sessionToken = window.localStorage.getItem("sessionToken");
+    let categoryChosen = categoryNames[this.getAttribute("data-cat")];
+    let difficulty = this.getAttribute("data-difficulty");
+    let url = `https://opentdb.com/api.php?amount=1&category=${categoryChosen}&difficulty=${difficulty}&type=multiple&token=${sessionToken}`;
+    let response = await fetch(url);
+    let json = await response.json();
+    viewQuestion(json);
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+  
+      // swap elements array[i] and array[j]
+      // we use "destructuring assignment" syntax to achieve that
+      // you'll find more details about that syntax in later chapters
+      // same can be written as:
+      // let t = array[i]; array[i] = array[j]; array[j] = t
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
