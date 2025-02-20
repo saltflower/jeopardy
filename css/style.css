@@ -85,11 +85,19 @@ header {
 
 #gameInfo {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 33.3% 33.3% 33.3%;
   justify-content: space-between;
   width: 90%;
   justify-self: center;
   margin-top: 20px;
+}
+
+#feedback {
+  text-align: center;
+}
+
+#score {
+  justify-self: right;
 }
 
 
