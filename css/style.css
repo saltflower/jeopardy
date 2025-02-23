@@ -10,8 +10,13 @@
   src: url("../fonts/gyparody_rg.ttf");
 }
 
-#gameBoard {
+#container {
   width: 90%;
+  justify-self: center;
+}
+
+#gameBoard {
+  width: 100%;
   justify-self: center;
   display: grid;
   grid-template-columns: 20% 20% 20% 20% 20%;
@@ -28,6 +33,7 @@ body {
 header {
   font-family: 'Gyparody';
   justify-self: center;
+  text-align: center;
 }
 
 
